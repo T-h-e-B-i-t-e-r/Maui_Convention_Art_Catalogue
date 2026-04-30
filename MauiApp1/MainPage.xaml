@@ -2,11 +2,40 @@
 
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="MauiApp1.MainPage"
              xmlns:local="clr-namespace:MauiApp1"
-             xmlns:models="clr-namespace:MauiApp1.Models"
+             xmlns:viewmodels="clr-namespace:MauiApp1.ViewModels"
              x:DataType="local:MainPage">
-
+    <ContentPage.Resources>
+        <Style TargetType="Border" x:Key="CategoryButtonStyle">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="PointerOver">
+                            <VisualState.Setters>
+                                <Setter Property="Background" Value="#9175FF" />
+                                <Setter Property="Stroke" Value="#7654FB" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+        <ResourceDictionary>
+            <Color x:Key="CategoryButtonNormalColor">#94AFC6</Color>
+            <Color x:Key="CategoryButtonSelectedColor">#00B0FF</Color>
+            <toolkit:BoolToObjectConverter x:Key="IsCategoryButtonSelectedColor"
+                                           FalseObject="{StaticResource CategoryButtonNormalColor}"
+                                           TrueObject="{StaticResource CategoryButtonSelectedColor}" />
+            <Color x:Key="CategoryButtonBorderNormalColor">#426682</Color>
+            <Color x:Key="CategoryButtonBorderSelectedColor">#0094D7</Color>
+            <toolkit:BoolToObjectConverter x:Key="IsCategoryButtonSelectedBorderColor"
+                                           FalseObject="{StaticResource CategoryButtonBorderNormalColor}"
+                                           TrueObject="{StaticResource CategoryButtonBorderSelectedColor}" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <Grid ColumnDefinitions="300, *" RowDefinitions="200, *" ColumnSpacing="20" RowSpacing="20" Padding="20">
         <Border Grid.Column="0"
                 Grid.RowSpan="2"
@@ -16,19 +45,24 @@
                 StrokeThickness="4"
                 StrokeShape="RoundRectangle 20"
                 Background="#637584">
-            <CollectionView BindingContext="{Binding CategoryButtonsViewModel}"
-                            ItemsSource="{Binding CategoryButtons}" SelectionMode="Single">
+            <CollectionView BindingContext="{Binding CategoryButtonsSelectionAreaViewModel}"
+                            ItemsSource="{Binding CategoryButtons}"
+                            SelectedItem="{Binding SelectedButtonViewModel}"
+                            SelectionMode="Single"
+                            SelectionChanged="OnCategoryButtonClicked">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:CategoryButton">
+                    <DataTemplate x:DataType="viewmodels:CategoryButtonViewModel">
                         <Grid Padding="10" RowDefinitions="*" ColumnDefinitions="*">
-                            <Border HeightRequest="64"
+                            <Border Style="{x:StaticResource CategoryButtonStyle}"
+                                    HeightRequest="64"
                                     HorizontalOptions="Fill"
-                                    Stroke="#426682"
+                                    Stroke="{Binding IsSelected, Converter={StaticResource IsCategoryButtonSelectedBorderColor}}"
                                     StrokeThickness="4"
                                     StrokeShape="RoundRectangle 40"
-                                    Background="#94AFC6">
+                                    Background="{Binding IsSelected, Converter={StaticResource IsCategoryButtonSelectedColor}}">
                                 <Label Text="{Binding Title}" HorizontalOptions="Fill" TextColor="#FFE300"
-                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="30" FontAttributes="Bold"/>
+                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="30"
+                                       FontAttributes="Bold" />
                             </Border>
                         </Grid>
                     </DataTemplate>

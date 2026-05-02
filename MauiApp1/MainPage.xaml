@@ -24,6 +24,21 @@
                 </VisualStateGroupList>
             </Setter>
         </Style>
+        <Style TargetType="Border" x:Key="SortButtonStyle">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="PointerOver">
+                            <VisualState.Setters>
+                                <Setter Property="Background" Value="#D500E7" />
+                                <Setter Property="Stroke" Value="#9400E7" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
         <ResourceDictionary>
             <Color x:Key="CategoryButtonNormalColor">#94AFC6</Color>
             <Color x:Key="CategoryButtonSelectedColor">#00B0FF</Color>
@@ -31,17 +46,30 @@
                                            FalseObject="{StaticResource CategoryButtonNormalColor}"
                                            TrueObject="{StaticResource CategoryButtonSelectedColor}" />
             <Color x:Key="CategoryButtonBorderNormalColor">#426682</Color>
-            <Color x:Key="CategoryButtonBorderSelectedColor">#0094D7</Color>
+            <Color x:Key="CategoryButtonBorderSelectedColor">#1C6C90</Color>
             <toolkit:BoolToObjectConverter x:Key="IsCategoryButtonSelectedBorderColor"
                                            FalseObject="{StaticResource CategoryButtonBorderNormalColor}"
                                            TrueObject="{StaticResource CategoryButtonBorderSelectedColor}" />
+            <Color x:Key="SortButtonNormalColor">#138CE9</Color>
+            <Color x:Key="SortButtonSelectedColor">#26BCFF</Color>
+            <toolkit:BoolToObjectConverter x:Key="IsSortButtonSelectedColor"
+                                           FalseObject="{StaticResource SortButtonNormalColor}"
+                                           TrueObject="{StaticResource SortButtonSelectedColor}" />
+            <Color x:Key="SortButtonBorderNormalColor">#75A8FF</Color>
+            <Color x:Key="SortButtonBorderSelectedColor">#0588C3</Color>
+            <toolkit:BoolToObjectConverter x:Key="IsSortButtonSelectedBorderColor"
+                                           FalseObject="{StaticResource SortButtonBorderNormalColor}"
+                                           TrueObject="{StaticResource SortButtonBorderSelectedColor}" />
+            <toolkit:BoolToObjectConverter x:Key="IsSortDescendingRotation"
+                                           TrueObject="180"
+                                           FalseObject="0" />
             <LinearGradientBrush x:Key="ArtItemBorderBrush" EndPoint="0,1">
                 <GradientStop Color="#D4B755" Offset="1" />
                 <GradientStop Color="#D48055" Offset="0" />
             </LinearGradientBrush>
         </ResourceDictionary>
     </ContentPage.Resources>
-    <Grid ColumnDefinitions="300, *" RowDefinitions="200, *" ColumnSpacing="20" RowSpacing="20" Padding="20">
+    <Grid ColumnDefinitions="300, *" RowDefinitions="100, *" ColumnSpacing="20" RowSpacing="20" Padding="20">
         <Border Grid.Column="0"
                 Grid.RowSpan="2"
                 VerticalOptions="Fill"
@@ -63,7 +91,7 @@
                                     HorizontalOptions="Fill"
                                     Stroke="{Binding IsSelected, Converter={StaticResource IsCategoryButtonSelectedBorderColor}}"
                                     StrokeThickness="4"
-                                    StrokeShape="RoundRectangle 40"
+                                    StrokeShape="Rectangle"
                                     Background="{Binding IsSelected, Converter={StaticResource IsCategoryButtonSelectedColor}}">
                                 <Label Text="{Binding Title}" HorizontalOptions="Fill" TextColor="#FFE300"
                                        HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="30"
@@ -83,6 +111,42 @@
                 StrokeThickness="4"
                 StrokeShape="RoundRectangle 20"
                 Background="#637584">
+            <CollectionView BindingContext="{Binding SortButtonSelectionAreaViewModel}"
+                            ItemsLayout="HorizontalList"
+                            ItemsSource="{Binding SortButtons}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="viewmodels:SortButtonViewModel">
+                        <Grid Padding="10" RowDefinitions="*" ColumnDefinitions="*">
+                            <Border Style="{x:StaticResource SortButtonStyle}"
+                                    WidthRequest="220"
+                                    VerticalOptions="Fill"
+                                    Stroke="{Binding IsSelected, Converter={StaticResource IsSortButtonSelectedBorderColor}}"
+                                    StrokeThickness="4"
+                                    StrokeShape="RoundRectangle 40"
+                                    Background="{Binding IsSelected, Converter={StaticResource IsSortButtonSelectedColor}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSortButtonClicked" Buttons="Primary"
+                                                          CommandParameter="{Binding}" />
+                                </Border.GestureRecognizers>
+                                <Grid RowDefinitions="*" ColumnDefinitions="*, 2*, *">
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Title}"
+                                           HorizontalOptions="Fill" TextColor="#FFE300"
+                                           HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                                           FontSize="30"
+                                           FontAttributes="Bold" />
+                                    <Image Grid.Column="2"
+                                           Source="minimap_arrow_a.png"
+                                           Margin="0,0,10,0"
+                                           WidthRequest="30"
+                                           HeightRequest="30"
+                                           Rotation="{Binding IsDescending, Converter={StaticResource IsSortDescendingRotation}}" />
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
         </Border>
         <Border Grid.Column="1"
                 Grid.Row="1"
@@ -123,9 +187,32 @@
                                 Background="#788D9E"
                                 VerticalOptions="Fill"
                                 HorizontalOptions="Fill">
-                                <Label Text="{Binding Name}" HorizontalOptions="Fill" TextColor="#FFE300"
-                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="30"
-                                       FontAttributes="Bold" />
+                                <Label HorizontalOptions="Fill" TextColor="#FFE300"
+                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="25"
+                                       FontAttributes="Bold">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label"
+                                                     Binding="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ArtItemDisplayViewModel}}, Path=CurrentSortButtonType}"
+                                                     Value="Name">
+                                            <Setter Property="Text" Value="{Binding Name}"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label"
+                                                     Binding="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ArtItemDisplayViewModel}}, Path=CurrentSortButtonType}"
+                                                     Value="Date">
+                                            <Setter Property="Text" Value="{Binding Date}"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label"
+                                                     Binding="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ArtItemDisplayViewModel}}, Path=CurrentSortButtonType}"
+                                                     Value="Size">
+                                            <Setter Property="Text" Value="{Binding Size}"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label"
+                                                     Binding="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ArtItemDisplayViewModel}}, Path=CurrentSortButtonType}"
+                                                     Value="Price">
+                                            <Setter Property="Text" Value="{Binding Price, StringFormat='{0:C2}'}"></Setter>
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
                             </Border>
                             <Image Grid.Row="1" Grid.Column="2" Margin="10,10,0,0" Source="heart_empty.png" />
                         </Grid>

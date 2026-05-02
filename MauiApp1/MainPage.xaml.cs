@@ -5,13 +5,16 @@ namespace MauiApp1;
 public partial class MainPage : ContentPage
 {
     public CategoryButtonsSelectionAreaViewModel CategoryButtonsSelectionAreaViewModel { get; set; }
+    public SortButtonSelectionAreaViewModel SortButtonSelectionAreaViewModel { get; set; }
     public ArtItemDisplayViewModel ArtItemDisplayViewModel { get; set; }
 
     public MainPage()
     {
         InitializeComponent();
         CategoryButtonsSelectionAreaViewModel = new();
-        ArtItemDisplayViewModel = new();
+        SortButtonSelectionAreaViewModel = new();
+        ArtItemDisplayViewModel = new(CategoryButtonsSelectionAreaViewModel.SelectedButtonViewModel,
+            SortButtonSelectionAreaViewModel.SelectedButtonViewModel);
         BindingContext = this;
     }
 
@@ -26,17 +29,34 @@ public partial class MainPage : ContentPage
         var previous = previousSelectedItems.FirstOrDefault() as CategoryButtonViewModel;
         var current = currentSelectedItems.FirstOrDefault() as CategoryButtonViewModel;
 
-        if (previous == current)
-        {
-            return;
-        }
-
         previous?.IsSelected = false;
         current?.IsSelected = true;
 
         if (current != null)
         {
-            ArtItemDisplayViewModel.SetDisplayCategory(current.CategoryButtonType, current.ArtCategory);
+            ArtItemDisplayViewModel.SetDisplayCategory(current);
         }
+    }
+
+    private void OnSortButtonClicked(object sender, TappedEventArgs e)
+    {
+        var sortButton = e.Parameter as SortButtonViewModel;
+        if (sortButton == null)
+        {
+            return;
+        }
+
+        if (SortButtonSelectionAreaViewModel.SelectedButtonViewModel != sortButton)
+        {
+            SortButtonSelectionAreaViewModel.SelectedButtonViewModel.IsSelected = false;
+            sortButton.IsSelected = true;
+            SortButtonSelectionAreaViewModel.SelectedButtonViewModel = sortButton;
+        }
+        else
+        {
+            sortButton.IsDescending = !sortButton.IsDescending;
+        }
+
+        ArtItemDisplayViewModel.UpdateSortAndDisplay(sortButton);
     }
 }

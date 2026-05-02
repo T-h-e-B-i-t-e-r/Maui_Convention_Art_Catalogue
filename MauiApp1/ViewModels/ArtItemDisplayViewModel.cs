@@ -13,14 +13,25 @@ public partial class ArtItemDisplayViewModel : ObservableObject
     private const string _RECENT_DATE_STRING_LIMIT = "January 01, 2026";
     private DateTime _recentDateTimeLimit = DateTime.Parse(_RECENT_DATE_STRING_LIMIT);
 
+    private CategoryButtonViewModel _currentCategoryButtonViewModel;
+    private SortButtonViewModel _currentSortButtonViewModel;
+
     [ObservableProperty]
     private List<ArtItemEntry> _displayedArtItems = new();
+    
+    [ObservableProperty]
+    private SortButtonType _currentSortButtonType;
 
-    public ArtItemDisplayViewModel()
+    public ArtItemDisplayViewModel(CategoryButtonViewModel currentCategoryButtonViewModel,
+        SortButtonViewModel currentSortButtonViewModel)
     {
         InitializeArtItemData();
 
         _displayedArtItems = _allArtItems;
+
+        _currentCategoryButtonViewModel = currentCategoryButtonViewModel;
+        _currentSortButtonViewModel = currentSortButtonViewModel;
+        _currentSortButtonType = _currentSortButtonViewModel.SortButtonType;
     }
 
     private void InitializeArtItemData()
@@ -146,24 +157,112 @@ public partial class ArtItemDisplayViewModel : ObservableObject
         };
     }
 
-    public void SetDisplayCategory(CategoryButtonType categoryButtonType, ArtCategory artCategory)
+    public void SetDisplayCategory(CategoryButtonViewModel newCategoryButtonViewModel)
     {
+        List<ArtItemEntry> listToSort;
+        
+        if (_currentCategoryButtonViewModel == newCategoryButtonViewModel)
+        {
+            listToSort = new(DisplayedArtItems);
+            SortDisplayCategory(listToSort);
+            DisplayedArtItems = listToSort;
+            return;
+        }
+
+        _currentCategoryButtonViewModel = newCategoryButtonViewModel;
+        CategoryButtonType categoryButtonType = _currentCategoryButtonViewModel.CategoryButtonType;
+        ArtCategory artCategory = _currentCategoryButtonViewModel.ArtCategory;
+        
         switch (categoryButtonType)
         {
             case CategoryButtonType.All:
             {
-                DisplayedArtItems = _allArtItems;
+                listToSort = new(_allArtItems);
+                SortDisplayCategory(listToSort);
+                DisplayedArtItems = listToSort;
                 break;
             }
             case CategoryButtonType.New:
             {
-                DisplayedArtItems = _newArtItems;
+                listToSort = new(_newArtItems);
+                SortDisplayCategory(listToSort);
+                DisplayedArtItems = listToSort;
                 break;
             }
             case CategoryButtonType.SpecificArtCategory:
             default:
             {
-                DisplayedArtItems = _categoryArtItems[artCategory];
+                listToSort = new(_categoryArtItems[artCategory]);
+                SortDisplayCategory(listToSort);
+                DisplayedArtItems = listToSort;
+                break;
+            }
+        }
+    }
+
+    public void UpdateSortAndDisplay(SortButtonViewModel newSortButtonViewModel)
+    {
+        _currentSortButtonViewModel = newSortButtonViewModel;
+        SetDisplayCategory(_currentCategoryButtonViewModel);
+    }
+    
+    private void SortDisplayCategory(List<ArtItemEntry> listToSort)
+    {
+        CurrentSortButtonType = _currentSortButtonViewModel.SortButtonType;
+        bool isDescending = _currentSortButtonViewModel.IsDescending;
+
+        switch (CurrentSortButtonType)
+        {
+            case SortButtonType.Name:
+            {
+                if (!isDescending)
+                {
+                    listToSort.Sort((x, y) => String.Compare(x.Name, y.Name, StringComparison.CurrentCulture));
+                }
+                else
+                {
+                    listToSort.Sort((x, y) => String.Compare(y.Name, x.Name, StringComparison.CurrentCulture));
+                }
+
+                break;
+            }
+            case SortButtonType.Date:
+            {
+                if (!isDescending)
+                {
+                    listToSort.Sort((x, y) => x.DateTime.CompareTo(y.DateTime));
+                }
+                else
+                {
+                    listToSort.Sort((x, y) => y.DateTime.CompareTo(x.DateTime));
+                }
+
+                break;
+            }
+            case SortButtonType.Size:
+            {
+                if (!isDescending)
+                {
+                    listToSort.Sort((x, y) => x.Size.CompareTo(y.Size));
+                }
+                else
+                {
+                    listToSort.Sort((x, y) => y.Size.CompareTo(x.Size));
+                }
+
+                break;
+            }
+            case SortButtonType.Price:
+            {
+                if (!isDescending)
+                {
+                    listToSort.Sort((x, y) => x.Price.CompareTo(y.Price));
+                }
+                else
+                {
+                    listToSort.Sort((x, y) => y.Price.CompareTo(x.Price));
+                }
+
                 break;
             }
         }

@@ -5,11 +5,11 @@ namespace MauiApp1.ViewModels;
 
 public partial class CategoryButtonViewModel(
     string title,
-    CategoryButtonType categoryButtonTypetype,
+    CategoryButtonType categoryButtonType,
     ArtCategory artCategory) : ObservableObject
 {
     public string Title { get; set; } = title;
-    public CategoryButtonType CategoryButtonType = categoryButtonTypetype;
+    public CategoryButtonType CategoryButtonType = categoryButtonType;
     public ArtCategory ArtCategory = artCategory;
 
     [ObservableProperty] public partial bool IsSelected { get; set; }

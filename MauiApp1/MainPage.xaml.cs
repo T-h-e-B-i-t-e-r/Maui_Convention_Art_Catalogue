@@ -33,5 +33,10 @@ public partial class MainPage : ContentPage
 
         previous?.IsSelected = false;
         current?.IsSelected = true;
+
+        if (current != null)
+        {
+            ArtItemDisplayViewModel.SetDisplayCategory(current.CategoryButtonType, current.ArtCategory);
+        }
     }
 }

@@ -43,7 +43,8 @@ public partial class ArtItemDisplayViewModel : ObservableObject
                     _categoryArtItems.TryAdd(ArtCategory.One, new() { artItem });
                 }
             }
-            else if (artItem.Categories.HasFlag(ArtCategory.Two))
+            
+            if (artItem.Categories.HasFlag(ArtCategory.Two))
             {
                 if (_categoryArtItems.ContainsKey(ArtCategory.Two))
                 {
@@ -54,7 +55,8 @@ public partial class ArtItemDisplayViewModel : ObservableObject
                     _categoryArtItems.TryAdd(ArtCategory.Two, new() { artItem });
                 }
             }
-            else if (artItem.Categories.HasFlag(ArtCategory.Three))
+            
+            if (artItem.Categories.HasFlag(ArtCategory.Three))
             {
                 if (_categoryArtItems.ContainsKey(ArtCategory.Three))
                 {
@@ -142,5 +144,28 @@ public partial class ArtItemDisplayViewModel : ObservableObject
                 Categories = ArtCategory.One | ArtCategory.Two | ArtCategory.Three,
             },
         };
+    }
+
+    public void SetDisplayCategory(CategoryButtonType categoryButtonType, ArtCategory artCategory)
+    {
+        switch (categoryButtonType)
+        {
+            case CategoryButtonType.All:
+            {
+                DisplayedArtItems = _allArtItems;
+                break;
+            }
+            case CategoryButtonType.New:
+            {
+                DisplayedArtItems = _newArtItems;
+                break;
+            }
+            case CategoryButtonType.SpecificArtCategory:
+            default:
+            {
+                DisplayedArtItems = _categoryArtItems[artCategory];
+                break;
+            }
+        }
     }
 }

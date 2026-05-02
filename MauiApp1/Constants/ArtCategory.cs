@@ -3,7 +3,8 @@
 [Flags]
 public enum ArtCategory
 {
-    One = 0,
-    Two = 1,
-    Three = 2,
+    None = 0,
+    One = 1,
+    Two = 2,
+    Three = 4,
 }

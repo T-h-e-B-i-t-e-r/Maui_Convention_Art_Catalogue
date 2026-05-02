@@ -4,16 +4,14 @@ namespace MauiApp1;
 
 public partial class MainPage : ContentPage
 {
-    public CategoryButtonsSelectionAreaViewModel CategoryButtonsSelectionAreaViewModel
-    {
-        get;
-        set;
-    }
+    public CategoryButtonsSelectionAreaViewModel CategoryButtonsSelectionAreaViewModel { get; set; }
+    public ArtItemDisplayViewModel ArtItemDisplayViewModel { get; set; }
 
     public MainPage()
     {
         InitializeComponent();
         CategoryButtonsSelectionAreaViewModel = new();
+        ArtItemDisplayViewModel = new();
         BindingContext = this;
     }
 

@@ -5,6 +5,7 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="MauiApp1.MainPage"
              xmlns:local="clr-namespace:MauiApp1"
+             xmlns:models="clr-namespace:MauiApp1.Models"
              xmlns:viewmodels="clr-namespace:MauiApp1.ViewModels"
              x:DataType="local:MainPage">
     <ContentPage.Resources>
@@ -34,6 +35,10 @@
             <toolkit:BoolToObjectConverter x:Key="IsCategoryButtonSelectedBorderColor"
                                            FalseObject="{StaticResource CategoryButtonBorderNormalColor}"
                                            TrueObject="{StaticResource CategoryButtonBorderSelectedColor}" />
+            <LinearGradientBrush x:Key="ArtItemBorderBrush" EndPoint="0,1">
+                <GradientStop Color="#D4B755" Offset="1" />
+                <GradientStop Color="#D48055" Offset="0" />
+            </LinearGradientBrush>
         </ResourceDictionary>
     </ContentPage.Resources>
     <Grid ColumnDefinitions="300, *" RowDefinitions="200, *" ColumnSpacing="20" RowSpacing="20" Padding="20">
@@ -87,6 +92,46 @@
                 StrokeThickness="4"
                 StrokeShape="RoundRectangle 20"
                 Background="#637584">
+            <CollectionView BindingContext="{Binding ArtItemDisplayViewModel}"
+                            ItemsSource="{Binding DisplayedArtItems}">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="3" HorizontalItemSpacing="30"
+                                     VerticalItemSpacing="30" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:ArtItemEntry">
+                        <Grid RowDefinitions="*,60"
+                              ColumnDefinitions="*, 4*, *"
+                              WidthRequest="400"
+                              HeightRequest="460">
+                            <Border Grid.Row="0" Grid.ColumnSpan="3"
+                                    Stroke="{StaticResource ArtItemBorderBrush}"
+                                    StrokeThickness="10"
+                                    StrokeShape="RoundRectangle 40"
+                                    Background="#2B0B98"
+                                    VerticalOptions="Fill"
+                                    HorizontalOptions="Fill">
+                                <Image Source="{Binding SpriteFilename}" />
+                            </Border>
+                            <Border
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="0,10,0,0"
+                                Stroke="#92ACC3"
+                                StrokeThickness="4"
+                                StrokeShape="Rectangle"
+                                Background="#788D9E"
+                                VerticalOptions="Fill"
+                                HorizontalOptions="Fill">
+                                <Label Text="{Binding Name}" HorizontalOptions="Fill" TextColor="#FFE300"
+                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="30"
+                                       FontAttributes="Bold" />
+                            </Border>
+                            <Image Grid.Row="1" Grid.Column="2" Margin="10,10,0,0" Source="heart_empty.png" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
         </Border>
     </Grid>
 

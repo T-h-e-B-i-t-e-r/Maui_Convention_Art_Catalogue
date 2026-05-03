@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiApp1.Views.ArtItemDisplayPopup"
+             xmlns:viewmodels="clr-namespace:MauiApp1.ViewModels"
+             x:DataType="viewmodels:ArtItemDisplayPopupViewModel"
+             HeightRequest="{Binding Height}"
+             WidthRequest="{Binding Width}"
+             Margin="20">
+    <AbsoluteLayout>
+        <Border AbsoluteLayout.LayoutBounds="0.5,0, 400, 70"
+                AbsoluteLayout.LayoutFlags="PositionProportional"
+                Stroke="#778E9E"
+                StrokeThickness="4"
+                StrokeShape="RoundRectangle 10"
+                Background="#637584">
+            <Label Text="{Binding ItemName}" HorizontalOptions="Fill" TextColor="#FFE300"
+                   HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="30"
+                   FontAttributes="Bold" />
+        </Border>
+        <Image AbsoluteLayout.LayoutBounds="0.64,0,60,60"
+               AbsoluteLayout.LayoutFlags="PositionProportional"
+               Source="checkbox_grey_cross.png">
+            <Image.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding CloseButtonClicked}" Buttons="Primary" />
+            </Image.GestureRecognizers>
+        </Image>
+        <Image AbsoluteLayout.LayoutBounds="0.5,.45,.75,.75"
+               AbsoluteLayout.LayoutFlags="All"
+               Source="{Binding SpriteFilename}">
+        </Image>
+        <StackLayout AbsoluteLayout.LayoutBounds="0.925,0.8,250,350"
+                     AbsoluteLayout.LayoutFlags="PositionProportional"
+                     Spacing="20">
+            <Border Padding="30,0,20,0"
+                    Stroke="#778E9E"
+                    StrokeThickness="4"
+                    StrokeShape="RoundRectangle 40"
+                    Background="#637584">
+                <AbsoluteLayout>
+                    <Label AbsoluteLayout.LayoutBounds="0,0.5,250,70"
+                           AbsoluteLayout.LayoutFlags="PositionProportional"
+                           Text="Favorite"
+                           TextColor="#FFE300"
+                           HorizontalTextAlignment="Start" VerticalTextAlignment="Center"
+                           FontSize="30"
+                           FontAttributes="Bold" />
+                    <Image AbsoluteLayout.LayoutBounds="0.9,0.5,50,50"
+                           AbsoluteLayout.LayoutFlags="PositionProportional"
+                           Source="heart_empty.png" />
+                </AbsoluteLayout>
+            </Border>
+            <Border Stroke="#778E9E"
+                    StrokeThickness="4"
+                    StrokeShape="RoundRectangle 20"
+                    Background="#637584">
+                <StackLayout Padding="20">
+                    <Label Text="Date:" HorizontalOptions="Start" TextColor="#FFE300" FontSize="20" />
+                    <Label Text="{Binding Date}" HorizontalOptions="Start" TextColor="#FFE300" FontSize="25" />
+                    <Label Text="Size:" HorizontalOptions="Start" TextColor="#FFE300" FontSize="20" />
+                    <Label Text="{Binding Size}" HorizontalOptions="Start" TextColor="#FFE300" FontSize="25" />
+                    <Label Text="Price:" HorizontalOptions="Start" TextColor="#FFE300" FontSize="20" />
+                    <Label Text="{Binding Price, StringFormat='{0:C2}'}" HorizontalOptions="Start" TextColor="#FFE300"
+                           FontSize="25" />
+                </StackLayout>
+            </Border>
+        </StackLayout>
+    </AbsoluteLayout>
+</ContentView>

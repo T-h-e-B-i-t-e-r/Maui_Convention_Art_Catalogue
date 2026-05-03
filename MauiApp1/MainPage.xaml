@@ -168,6 +168,9 @@
                               ColumnDefinitions="*, 4*, *"
                               WidthRequest="400"
                               HeightRequest="460">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnArtItemTapped" Buttons="Primary" CommandParameter="{Binding}" />
+                            </Grid.GestureRecognizers>
                             <Border Grid.Row="0" Grid.ColumnSpan="3"
                                     Stroke="{StaticResource ArtItemBorderBrush}"
                                     StrokeThickness="10"

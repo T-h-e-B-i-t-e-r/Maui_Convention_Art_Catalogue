@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MauiApp1.Constants;
 using MauiApp1.Models;
 
@@ -6,9 +7,10 @@ namespace MauiApp1.ViewModels;
 
 public partial class ArtItemDisplayViewModel : ObservableObject
 {
-    private List<ArtItemEntry> _allArtItems = new();
-    private List<ArtItemEntry> _newArtItems = new();
-    private Dictionary<ArtCategory, List<ArtItemEntry>> _categoryArtItems = new();
+    private List<ArtItemEntryViewModel> _allArtItems = new();
+    private List<ArtItemEntryViewModel> _newArtItems = new();
+    private Dictionary<ArtCategory, List<ArtItemEntryViewModel>> _categoryArtItems = new();
+    private HashSet<ArtItemEntryViewModel> _favoritedItems = new();
     
     private const string _RECENT_DATE_STRING_LIMIT = "January 01, 2026";
     private DateTime _recentDateTimeLimit = DateTime.Parse(_RECENT_DATE_STRING_LIMIT);
@@ -17,10 +19,13 @@ public partial class ArtItemDisplayViewModel : ObservableObject
     private SortButtonViewModel _currentSortButtonViewModel;
 
     [ObservableProperty]
-    private List<ArtItemEntry> _displayedArtItems = new();
+    private List<ArtItemEntryViewModel> _displayedArtItems;
     
     [ObservableProperty]
     private SortButtonType _currentSortButtonType;
+
+    [ObservableProperty]
+    private int _favoritedItemsCount;
 
     public ArtItemDisplayViewModel(CategoryButtonViewModel currentCategoryButtonViewModel,
         SortButtonViewModel currentSortButtonViewModel)
@@ -32,6 +37,7 @@ public partial class ArtItemDisplayViewModel : ObservableObject
         _currentCategoryButtonViewModel = currentCategoryButtonViewModel;
         _currentSortButtonViewModel = currentSortButtonViewModel;
         _currentSortButtonType = _currentSortButtonViewModel.SortButtonType;
+        _favoritedItemsCount = _favoritedItems.Count;
     }
 
     private void InitializeArtItemData()
@@ -43,7 +49,7 @@ public partial class ArtItemDisplayViewModel : ObservableObject
         
         foreach (var artItem in _allArtItems)
         {
-            if (artItem.Categories.HasFlag(ArtCategory.One))
+            if (artItem.ArtItemEntry.Categories.HasFlag(ArtCategory.One))
             {
                 if (_categoryArtItems.ContainsKey(ArtCategory.One))
                 {
@@ -55,7 +61,7 @@ public partial class ArtItemDisplayViewModel : ObservableObject
                 }
             }
             
-            if (artItem.Categories.HasFlag(ArtCategory.Two))
+            if (artItem.ArtItemEntry.Categories.HasFlag(ArtCategory.Two))
             {
                 if (_categoryArtItems.ContainsKey(ArtCategory.Two))
                 {
@@ -67,7 +73,7 @@ public partial class ArtItemDisplayViewModel : ObservableObject
                 }
             }
             
-            if (artItem.Categories.HasFlag(ArtCategory.Three))
+            if (artItem.ArtItemEntry.Categories.HasFlag(ArtCategory.Three))
             {
                 if (_categoryArtItems.ContainsKey(ArtCategory.Three))
                 {
@@ -79,7 +85,7 @@ public partial class ArtItemDisplayViewModel : ObservableObject
                 }
             }
 
-            if (artItem.DateTime >= _recentDateTimeLimit)
+            if (artItem.ArtItemEntry.DateTime >= _recentDateTimeLimit)
             {
                 _newArtItems.Add(artItem);
             }
@@ -91,25 +97,15 @@ public partial class ArtItemDisplayViewModel : ObservableObject
     {
         _allArtItems = new()
         {
-            new ArtItemEntry
-            {
-                Name = "Art Piece 1",
-                SpriteFilename = "sample_1_art.png",
-                Date = "January 15, 2026",
-                Price = 20,
-                Size = ArtItemSize.Large,
-                Categories = ArtCategory.One,
-            },
-            new ArtItemEntry
-            {
+            new ArtItemEntryViewModel(new ArtItemEntry {
                 Name = "Art Piece 2",
                 SpriteFilename = "sample_2_art.png",
                 Date = "December 01, 2025",
                 Price = 10,
                 Size = ArtItemSize.Small,
                 Categories = ArtCategory.Two,
-            },
-            new ArtItemEntry
+            }),
+            new ArtItemEntryViewModel(new ArtItemEntry
             {
                 Name = "Art Piece 3",
                 SpriteFilename = "sample_3_art.png",
@@ -117,8 +113,8 @@ public partial class ArtItemDisplayViewModel : ObservableObject
                 Price = 15,
                 Size = ArtItemSize.Medium,
                 Categories = ArtCategory.Three,
-            },
-            new ArtItemEntry
+            }),
+            new ArtItemEntryViewModel(new ArtItemEntry
             {
                 Name = "Art Piece 4",
                 SpriteFilename = "sample_4_art.png",
@@ -126,8 +122,8 @@ public partial class ArtItemDisplayViewModel : ObservableObject
                 Price = 20,
                 Size = ArtItemSize.Large,
                 Categories = ArtCategory.One | ArtCategory.Two,
-            },
-            new ArtItemEntry
+            }),
+            new ArtItemEntryViewModel(new ArtItemEntry
             {
                 Name = "Art Piece 5",
                 SpriteFilename = "sample_5_art.png",
@@ -135,8 +131,8 @@ public partial class ArtItemDisplayViewModel : ObservableObject
                 Price = 20,
                 Size = ArtItemSize.Large,
                 Categories = ArtCategory.Two | ArtCategory.Three,
-            },
-            new ArtItemEntry
+            }),
+            new ArtItemEntryViewModel(new ArtItemEntry
             {
                 Name = "Art Piece 6",
                 SpriteFilename = "sample_6_art.png",
@@ -144,8 +140,8 @@ public partial class ArtItemDisplayViewModel : ObservableObject
                 Price = 15,
                 Size = ArtItemSize.Medium,
                 Categories = ArtCategory.One | ArtCategory.Three,
-            },
-            new ArtItemEntry
+            }),
+            new ArtItemEntryViewModel(new ArtItemEntry
             {
                 Name = "Art Piece 7",
                 SpriteFilename = "sample_7_art.png",
@@ -153,13 +149,13 @@ public partial class ArtItemDisplayViewModel : ObservableObject
                 Price = 20,
                 Size = ArtItemSize.Large,
                 Categories = ArtCategory.One | ArtCategory.Two | ArtCategory.Three,
-            },
+            }),
         };
     }
 
     public void SetDisplayCategory(CategoryButtonViewModel newCategoryButtonViewModel)
     {
-        List<ArtItemEntry> listToSort;
+        List<ArtItemEntryViewModel> listToSort;
         
         if (_currentCategoryButtonViewModel == newCategoryButtonViewModel)
         {
@@ -206,7 +202,7 @@ public partial class ArtItemDisplayViewModel : ObservableObject
         SetDisplayCategory(_currentCategoryButtonViewModel);
     }
     
-    private void SortDisplayCategory(List<ArtItemEntry> listToSort)
+    private void SortDisplayCategory(List<ArtItemEntryViewModel> listToSort)
     {
         CurrentSortButtonType = _currentSortButtonViewModel.SortButtonType;
         bool isDescending = _currentSortButtonViewModel.IsDescending;
@@ -217,11 +213,11 @@ public partial class ArtItemDisplayViewModel : ObservableObject
             {
                 if (!isDescending)
                 {
-                    listToSort.Sort((x, y) => String.Compare(x.Name, y.Name, StringComparison.CurrentCulture));
+                    listToSort.Sort((x, y) => String.Compare(x.ArtItemEntry.Name, y.ArtItemEntry.Name, StringComparison.CurrentCulture));
                 }
                 else
                 {
-                    listToSort.Sort((x, y) => String.Compare(y.Name, x.Name, StringComparison.CurrentCulture));
+                    listToSort.Sort((x, y) => String.Compare(y.ArtItemEntry.Name, x.ArtItemEntry.Name, StringComparison.CurrentCulture));
                 }
 
                 break;
@@ -230,11 +226,11 @@ public partial class ArtItemDisplayViewModel : ObservableObject
             {
                 if (!isDescending)
                 {
-                    listToSort.Sort((x, y) => x.DateTime.CompareTo(y.DateTime));
+                    listToSort.Sort((x, y) => x.ArtItemEntry.DateTime.CompareTo(y.ArtItemEntry.DateTime));
                 }
                 else
                 {
-                    listToSort.Sort((x, y) => y.DateTime.CompareTo(x.DateTime));
+                    listToSort.Sort((x, y) => y.ArtItemEntry.DateTime.CompareTo(x.ArtItemEntry.DateTime));
                 }
 
                 break;
@@ -243,11 +239,11 @@ public partial class ArtItemDisplayViewModel : ObservableObject
             {
                 if (!isDescending)
                 {
-                    listToSort.Sort((x, y) => x.Size.CompareTo(y.Size));
+                    listToSort.Sort((x, y) => x.ArtItemEntry.Size.CompareTo(y.ArtItemEntry.Size));
                 }
                 else
                 {
-                    listToSort.Sort((x, y) => y.Size.CompareTo(x.Size));
+                    listToSort.Sort((x, y) => y.ArtItemEntry.Size.CompareTo(x.ArtItemEntry.Size));
                 }
 
                 break;
@@ -256,15 +252,28 @@ public partial class ArtItemDisplayViewModel : ObservableObject
             {
                 if (!isDescending)
                 {
-                    listToSort.Sort((x, y) => x.Price.CompareTo(y.Price));
+                    listToSort.Sort((x, y) => x.ArtItemEntry.Price.CompareTo(y.ArtItemEntry.Price));
                 }
                 else
                 {
-                    listToSort.Sort((x, y) => y.Price.CompareTo(x.Price));
+                    listToSort.Sort((x, y) => y.ArtItemEntry.Price.CompareTo(x.ArtItemEntry.Price));
                 }
 
                 break;
             }
         }
+    }
+    
+    [RelayCommand]
+    private void FavoriteItemToggle(ArtItemEntryViewModel artItemEntryViewModel)
+    {
+        if (!_favoritedItems.Add(artItemEntryViewModel))
+        {
+            _favoritedItems.Remove(artItemEntryViewModel);
+        }
+        
+        artItemEntryViewModel.IsFavorite = !artItemEntryViewModel.IsFavorite;
+
+        FavoritedItemsCount = _favoritedItems.Count;
     }
 }

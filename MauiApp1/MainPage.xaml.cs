@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Maui;
-using MauiApp1.Models;
 using MauiApp1.ViewModels;
 using MauiApp1.Views;
 
@@ -69,8 +68,8 @@ public partial class MainPage : ContentPage
 
     private async void OnArtItemTapped(object sender, TappedEventArgs e)
     {
-        var artItemEntry = e.Parameter as ArtItemEntry;
-        if (artItemEntry == null)
+        var artItemEntryViewModel = e.Parameter as ArtItemEntryViewModel;
+        if (artItemEntryViewModel == null)
         {
             return;
         }
@@ -83,11 +82,11 @@ public partial class MainPage : ContentPage
             PageOverlayColor = Colors.Black.WithAlpha(0.6f),
         };
         
-        var artItemEntryData = new Dictionary<string, object>
+        var artItemEntryViewModelData = new Dictionary<string, object>
         {
-            { "artItemEntry", artItemEntry },
+            { "artItemEntryViewModel", artItemEntryViewModel },
         };
         
-        await _popupService.ShowPopupAsync<ArtItemDisplayPopup>(Shell.Current, popupOptions, artItemEntryData);
+        await _popupService.ShowPopupAsync<ArtItemDisplayPopup>(Shell.Current, popupOptions, artItemEntryViewModelData);
     }
 }

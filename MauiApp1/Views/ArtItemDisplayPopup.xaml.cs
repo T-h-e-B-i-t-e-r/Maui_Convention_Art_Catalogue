@@ -1,5 +1,4 @@
-﻿using MauiApp1.Models;
-using MauiApp1.ViewModels;
+﻿using MauiApp1.ViewModels;
 
 namespace MauiApp1.Views;
 
@@ -17,16 +16,11 @@ public partial class ArtItemDisplayPopup : ContentView, IQueryAttributable
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (query.TryGetValue("artItemEntry", out var artItemEntry))
+        if (query.TryGetValue("artItemEntryViewModel", out var artItemEntryViewModel))
         {
-            var item = artItemEntry as ArtItemEntry;
-            if (item != null)
+            if (artItemEntryViewModel is ArtItemEntryViewModel item)
             {
-                _viewModel.ItemName = item.Name;
-                _viewModel.SpriteFilename = item.SpriteFilename;
-                _viewModel.Date = item.Date;
-                _viewModel.Size = item.Size;
-                _viewModel.Price = item.Price;
+                _viewModel.ArtItemEntryViewModel = item;
             }
         }
     }

@@ -97,6 +97,15 @@ public partial class ArtItemDisplayViewModel : ObservableObject
     {
         _allArtItems = new()
         {
+            new ArtItemEntryViewModel(new ArtItemEntry
+            {
+                Name = "Art Piece 1",
+                SpriteFilename = "sample_1_art.png",
+                Date = "January 15, 2026",
+                Price = 20,
+                Size = ArtItemSize.Large,
+                Categories = ArtCategory.One,
+            }),
             new ArtItemEntryViewModel(new ArtItemEntry {
                 Name = "Art Piece 2",
                 SpriteFilename = "sample_2_art.png",

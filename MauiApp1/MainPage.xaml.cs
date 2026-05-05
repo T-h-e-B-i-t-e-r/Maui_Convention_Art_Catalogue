@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using MauiApp1.Models;
 using MauiApp1.ViewModels;
 using MauiApp1.Views;
 
@@ -88,5 +89,25 @@ public partial class MainPage : ContentPage
         };
         
         await _popupService.ShowPopupAsync<ArtItemDisplayPopup>(Shell.Current, popupOptions, artItemEntryViewModelData);
+    }
+
+    private async void OnViewFavoritesButtonTapped(object sender, TappedEventArgs e)
+    {
+        var artItemEntries = ArtItemDisplayViewModel.GetFavoritedItems();
+        
+        var popupOptions = new PopupOptions
+        {
+            BindingContext = BindingContext,
+            Shape = null,
+            Shadow = null,
+            PageOverlayColor = Colors.Black.WithAlpha(0.6f),
+        };
+        
+        var artItemEntriesData = new Dictionary<string, object>
+        {
+            { "artItemEntries", artItemEntries },
+        };
+        
+        await _popupService.ShowPopupAsync<FavoritedItemsCollectionViewPopup>(Shell.Current, popupOptions, artItemEntriesData);
     }
 }

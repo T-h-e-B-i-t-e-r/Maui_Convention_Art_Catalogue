@@ -20,6 +20,7 @@ public static class MauiProgram
             });
         builder.Services.AddSingleton<MainPage>();
         builder.Services.AddTransientPopup<ArtItemDisplayPopup, ArtItemDisplayPopupViewModel>();
+        builder.Services.AddTransientPopup<FavoritedItemsCollectionViewPopup, FavoritedItemsCollectionViewPopupViewModel>();
 
 #if DEBUG
         builder.Logging.AddDebug();

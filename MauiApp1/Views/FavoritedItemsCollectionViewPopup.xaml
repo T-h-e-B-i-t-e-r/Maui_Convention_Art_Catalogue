@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiApp1.Views.FavoritedItemsCollectionViewPopup"
+             xmlns:models="clr-namespace:MauiApp1.Models"
+             xmlns:viewmodels="clr-namespace:MauiApp1.ViewModels"
+             x:DataType="viewmodels:FavoritedItemsCollectionViewPopupViewModel"
+             HeightRequest="{Binding Height}"
+             WidthRequest="{Binding Width}"
+             Padding="0" Margin="0">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <LinearGradientBrush x:Key="ArtItemBorderBrush" EndPoint="0,1">
+                <GradientStop Color="#D4B755" Offset="1" />
+                <GradientStop Color="#D48055" Offset="0" />
+            </LinearGradientBrush>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <Grid RowDefinitions="100,*,100" ColumnDefinitions="*"
+          RowSpacing="20">
+        <Border Grid.Row="0"
+                VerticalOptions="Start"
+                HorizontalOptions="Center"
+                WidthRequest="400"
+                HeightRequest="70"
+                Margin="0,10,0,0"
+                Stroke="#778E9E"
+                StrokeThickness="4"
+                StrokeShape="RoundRectangle 10"
+                Background="#637584">
+            <Label Text="Saved Items" HorizontalOptions="Fill" TextColor="#FFE300"
+                   HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="30"
+                   FontAttributes="Bold" />
+        </Border>
+        <Border Grid.Row="1"
+                VerticalOptions="Fill"
+                HorizontalOptions="Fill"
+                Stroke="#778E9E"
+                StrokeThickness="4"
+                StrokeShape="RoundRectangle 20"
+                Background="#637584">
+            <CollectionView ItemsSource="{Binding FavoritedItems}">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="3" HorizontalItemSpacing="30"
+                                     VerticalItemSpacing="30" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:ArtItemEntry">
+                        <Grid RowDefinitions="*,60"
+                              ColumnDefinitions="*, 4*, *"
+                              WidthRequest="400"
+                              HeightRequest="460">
+                            <Border Grid.Row="0" Grid.ColumnSpan="3"
+                                    Stroke="{StaticResource ArtItemBorderBrush}"
+                                    StrokeThickness="10"
+                                    StrokeShape="RoundRectangle 40"
+                                    Background="#2B0B98"
+                                    VerticalOptions="Fill"
+                                    HorizontalOptions="Fill">
+                                <Image Source="{Binding SpriteFilename}" />
+                            </Border>
+                            <Border
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="0,10,0,0"
+                                Stroke="#92ACC3"
+                                StrokeThickness="4"
+                                StrokeShape="Rectangle"
+                                Background="#788D9E"
+                                VerticalOptions="Fill"
+                                HorizontalOptions="Fill">
+                                <Label Text="{Binding Price, StringFormat='{0:C2}'}"
+                                       HorizontalOptions="Fill" TextColor="#FFE300"
+                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="25"
+                                       FontAttributes="Bold" />
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Border>
+        <Border Grid.Row="2"
+                VerticalOptions="End"
+                HorizontalOptions="Center"
+                WidthRequest="400"
+                HeightRequest="70"
+                Margin="0,0,0,10"
+                Stroke="#778E9E"
+                StrokeThickness="4"
+                StrokeShape="RoundRectangle 10"
+                Background="#637584">
+            <Label Text="{Binding TotalPrice, StringFormat='Total: {0:C2}'}" HorizontalOptions="Fill" TextColor="#FFE300"
+                   HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="30"
+                   FontAttributes="Bold" />
+        </Border>
+        <Border Grid.Row="2"
+                VerticalOptions="End"
+                HorizontalOptions="End"
+                WidthRequest="85"
+                HeightRequest="85"
+                Margin="0,0, 0,10"
+                Stroke="#778E9E"
+                StrokeThickness="4"
+                StrokeShape="Ellipse"
+                Background="#637584">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding CloseButtonClicked}" Buttons="Primary" />
+            </Border.GestureRecognizers>
+            <Grid ColumnDefinitions="*" RowDefinitions="*">
+                <Image Source="heart_full.png" WidthRequest="60" HeightRequest="60" />
+                <Label Text="{Binding FavoritedItemsCount}" TextColor="#FFE300"
+                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="30"
+                       FontAttributes="Bold" Margin="0,0,0,5" />
+            </Grid>
+        </Border>
+    </Grid>
+</ContentView>

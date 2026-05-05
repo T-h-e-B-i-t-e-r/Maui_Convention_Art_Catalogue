@@ -285,4 +285,9 @@ public partial class ArtItemDisplayViewModel : ObservableObject
 
         FavoritedItemsCount = _favoritedItems.Count;
     }
+
+    public List<ArtItemEntry> GetFavoritedItems()
+    {
+        return _favoritedItems.Select(artItemEntryViewModel => artItemEntryViewModel.ArtItemEntry).ToList();;
+    }
 }

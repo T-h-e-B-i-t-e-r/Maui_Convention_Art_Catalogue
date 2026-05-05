@@ -236,13 +236,17 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </Border>
-        <Border Grid.Column="1" Grid.Row="1" VerticalOptions="End" HorizontalOptions="End" Margin="0,0, 10,10"
+        <Border Grid.Column="1" Grid.Row="1" VerticalOptions="End" HorizontalOptions="End"
+                Margin="0,0, 25,10"
                 WidthRequest="85"
-                Height="85"
+                HeightRequest="85"
                 Stroke="#778E9E"
                 StrokeThickness="4"
                 StrokeShape="Ellipse"
                 Background="#637584">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnViewFavoritesButtonTapped" Buttons="Primary" />
+            </Border.GestureRecognizers>
             <Grid ColumnDefinitions="*" RowDefinitions="*">
                 <Image Source="heart_full.png" WidthRequest="60" HeightRequest="60" />
                 <Label Text="{Binding ArtItemDisplayViewModel.FavoritedItemsCount}" TextColor="#FFE300"
